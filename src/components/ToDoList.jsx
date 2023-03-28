@@ -69,7 +69,7 @@ const ToDoList = ({ todoList, setTodoList, saveList, removeList }) => {
                                 className="form-check-input"
                                 type="checkbox"
                                 value={task.title}
-                                id="lessonCheck"
+                                id={"lessonCheck" + idx}
                                 onChange={(e) => {
                                     changeCurrentTaskStatus(
                                         e.target.checked,
@@ -78,7 +78,10 @@ const ToDoList = ({ todoList, setTodoList, saveList, removeList }) => {
                                 }}
                                 checked={task.done}
                             />
-                            <label className="form-check-label" for="lessonCheck">
+                            <label
+                                className="form-check-label"
+                                for={"lessonCheck" + idx}
+                            >
                                 {task.title} | {task.duration} mins
                             </label>
                         </div>
