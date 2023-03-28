@@ -9,10 +9,15 @@ const RawTextBox = ({ setTodoList }) => {
     const handlePromptSubmit = (e) => {
         e.preventDefault();
 
+        let rawTextWithRemovedEmptyLines = rawText.replace(
+            /^(?=\n)$|^\s*|\s*$|\n\n+/gm,
+            ""
+        );
+
         const lessons = [];
         let totalTime = 0;
 
-        const lines = rawText.split("\n");
+        const lines = rawTextWithRemovedEmptyLines.split("\n");
         for (let i = 0; i < lines.length; i++) {
             const titleLine = lines[i];
             const titleRegex = /^\d{1,3}\..+/;
@@ -43,7 +48,7 @@ const RawTextBox = ({ setTodoList }) => {
             lessons,
             totalTime,
         });
-        localStorage.setItem("rawText", rawText);
+        localStorage.setItem("rawText", rawTextWithRemovedEmptyLines);
     };
 
     return (
@@ -58,7 +63,10 @@ const RawTextBox = ({ setTodoList }) => {
                     id="exampleFormControlTextarea1"
                     rows="6"
                     value={rawText}
-                    onChange={(e) => setRawText(e.target.value)}
+                    onChange={(e) =>{
+                        
+                        setRawText(e.target.value)
+                    }}
                     style={{ resize: "none" }}
                 ></textarea>
                 <button type="submit" className="btn btn-success mt-3">
