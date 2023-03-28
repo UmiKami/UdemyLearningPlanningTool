@@ -23,6 +23,9 @@ const ToDoList = ({ todoList, setTodoList, saveList, removeList }) => {
         let intervalID = setInterval(() => {
             if(time < todoList.totalTime){
                 setTime(time => time + 1)
+            }else if (time > todoList.totalTime){
+                setTime((time) => time - 1);
+
             }else{
                 return;
             }
