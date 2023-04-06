@@ -1,20 +1,30 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 
-const RawTextBox = ({ setTodoList }) => {
+const RawTextBox = ({ setTodoList, courseList, saveCourses }) => {
     const [rawText, setRawText] = useState(
         localStorage.getItem("rawText") || ""
     );
 
+    const [selectedCourse, setSelectedCourse] = useState(courseList[0]);
+    const [courseName, setCourseName] = useState("");
+    const [requestCourses, setRequestCourses] = useState(false);
+
+
+    console.log(selectedCourse);
+    
     const handlePromptSubmit = (e) => {
         e.preventDefault();
-
+        
         let rawTextWithRemovedEmptyLines = rawText.replace(
             /^(?=\n)$|^\s*|\s*$|\n\n+/gm,
             ""
         );
 
         const lessons = [];
+
         let totalTime = 0;
 
         const lines = rawTextWithRemovedEmptyLines.split("\n");
@@ -28,7 +38,7 @@ const RawTextBox = ({ setTodoList }) => {
 
                 if (durationRegex.test(durationLine)) {
                     const duration = parseInt(durationLine);
-                    lessons.push({ title: titleLine, duration, done: false });
+                    lessons.push({ title: titleLine, duration, done: false, course: selectedCourse });
                     totalTime += duration;
                 } else {
                     throw new Error(
@@ -44,9 +54,14 @@ const RawTextBox = ({ setTodoList }) => {
             }
         }
 
+        let newList = JSON.parse(localStorage.getItem("todoList")).lessons || [];
+        newList = newList.filter((item) => item.course !== selectedCourse);
+        newList = [...newList, ...lessons];
+
+        
+
         setTodoList({
-            lessons,
-            totalTime,
+            lessons: newList
         });
         localStorage.setItem("rawText", rawTextWithRemovedEmptyLines);
     };
@@ -59,19 +74,76 @@ const RawTextBox = ({ setTodoList }) => {
                     to do here:
                 </label>
                 <textarea
+                    required
                     className="form-control"
                     id="exampleFormControlTextarea1"
                     rows="6"
                     value={rawText}
-                    onChange={(e) =>{
-                        
-                        setRawText(e.target.value)
+                    onChange={(e) => {
+                        setRawText(e.target.value);
                     }}
                     style={{ resize: "none" }}
                 ></textarea>
-                <button type="submit" className="btn btn-success mt-3">
+                <select
+                    className="form-select mt-4"
+                    aria-label="Default select example"
+                    required
+                    onChange={(e) => setSelectedCourse(e.target.value)}
+                >
+                    {courseList.map((course, index) => {
+                        return <option value={course}>{course}</option>;
+                    })}
+                </select>
+                <button type="submit" className="btn btn-success mt-3 me-2">
                     Create List
                 </button>
+                <button
+                    type="submit"
+                    className="btn btn-primary mt-3"
+                    onClick={() => setRequestCourses(true)}
+                >
+                    Add Course
+                </button>
+
+                <Modal
+                    show={requestCourses}
+                    onHide={() => setRequestCourses(false)}
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Add additinal courses</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>Note: Separate the name of the courses by lines</p>
+                        <textarea
+                            required
+                            className="form-control"
+                            id="exampleFormControlTextarea1"
+                            rows="6"
+                            value={courseName}
+                            onChange={(e) => {
+                                setCourseName(e.target.value);
+                            }}
+                            style={{ resize: "none" }}
+                        ></textarea>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="secondary"
+                            onClick={() => setRequestCourses(false)}
+                        >
+                            Close
+                        </Button>
+                        <Button
+                            variant="primary"
+                            onClick={() => {
+                                let hasUpdatedResources = saveCourses(courseName, "add")
+                                if(hasUpdatedResources) setRequestCourses(false)
+                            }}
+                        >
+                            Save Changes
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </form>
         </div>
     );
