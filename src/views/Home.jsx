@@ -81,7 +81,7 @@ function App() {
     return (
         <div className="App container" style={{ height: "100vh" }}>
             <h1 className="py-5 text-center" style={{ color: "#5624d0" }}>
-                Udemy Lessons Planning
+                Udemy Lessons Planning 
             </h1>
             <RawTextBox
                 setTodoList={setTodoList}

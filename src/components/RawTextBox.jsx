@@ -2,15 +2,22 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import "../styles/RawTextBox.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import tutorial from "../assets/tutorial.mp4";
 
 const RawTextBox = ({ setTodoList, courseList, saveCourses }) => {
     const [rawText, setRawText] = useState(
         localStorage.getItem("rawText") || ""
     );
 
+    const [displayHelp, setDisplayHelp] = useState(false);
+
     const [selectedCourse, setSelectedCourse] = useState(courseList[0]);
     const [courseName, setCourseName] = useState("");
     const [requestCourses, setRequestCourses] = useState(false);
+    const [openVideo, setOpenVideo] = useState(false);
 
 
     console.log(selectedCourse);
@@ -73,17 +80,30 @@ const RawTextBox = ({ setTodoList, courseList, saveCourses }) => {
                     Copy and paste the information about of the lessons you want
                     to do here:
                 </label>
-                <textarea
-                    required
-                    className="form-control"
-                    id="exampleFormControlTextarea1"
-                    rows="6"
-                    value={rawText}
-                    onChange={(e) => {
-                        setRawText(e.target.value);
-                    }}
-                    style={{ resize: "none" }}
-                ></textarea>
+                <div
+                    className="text-area-container"
+                    onMouseOver={() => setDisplayHelp(true)}
+                    onMouseLeave={() => setDisplayHelp(false)}
+                >
+                    <textarea
+                        required
+                        className="form-control"
+                        id="exampleFormControlTextarea1"
+                        rows="6"
+                        value={rawText}
+                        onChange={(e) => {
+                            setRawText(e.target.value);
+                        }}
+                        style={{ resize: "none" }}
+                    ></textarea>
+                    <span
+                        className="tutorial-prompt d-flex align-items-center gap-1"
+                        style={{ opacity: displayHelp ? 1 : 0 }}
+                        onClick={() => setOpenVideo(true)}
+                    >
+                        <FontAwesomeIcon icon={faCircleInfo} /> Watch Tutorial
+                    </span>
+                </div>
                 <select
                     className="form-select mt-4"
                     aria-label="Default select example"
@@ -104,6 +124,18 @@ const RawTextBox = ({ setTodoList, courseList, saveCourses }) => {
                 >
                     Add Course
                 </button>
+                <Modal
+                    show={openVideo}
+                    onHide={() => setOpenVideo(false)}
+                    size="xl"
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title style={{textTransform: "capitalize"}}>How to use this page</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <video src={tutorial} className="col-12" controls></video>
+                    </Modal.Body>
+                </Modal>
 
                 <Modal
                     show={requestCourses}
@@ -136,8 +168,12 @@ const RawTextBox = ({ setTodoList, courseList, saveCourses }) => {
                         <Button
                             variant="primary"
                             onClick={() => {
-                                let hasUpdatedResources = saveCourses(courseName, "add")
-                                if(hasUpdatedResources) setRequestCourses(false)
+                                let hasUpdatedResources = saveCourses(
+                                    courseName,
+                                    "add"
+                                );
+                                if (hasUpdatedResources)
+                                    setRequestCourses(false);
                             }}
                         >
                             Save Changes

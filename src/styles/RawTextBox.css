@@ -1,0 +1,19 @@
+.tutorial-prompt {
+    position: absolute !important;
+    top: 4%;
+    cursor: pointer;
+    right: .5%;
+    color: purple !important;
+    transition: all 0.2s ease-in-out;
+    font-weight: bold;
+    background-color: rgb(255, 183, 219);
+    padding: 5px 10px;
+    border-radius: 7px;
+}
+.text-area-container{
+    position: relative !important;
+}
+
+.video-modal{
+    width: 100vw !important;
+}
