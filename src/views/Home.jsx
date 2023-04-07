@@ -3,6 +3,7 @@ import RawTextBox from "../components/RawTextBox";
 import ToDoList from "../components/ToDoList";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import Tutorial from "../components/Tutorial";
 
 function App() {
     const [todoList, setTodoList] = useState(
@@ -81,7 +82,7 @@ function App() {
     return (
         <div className="App container" style={{ height: "100vh" }}>
             <h1 className="py-5 text-center" style={{ color: "#5624d0" }}>
-                Udemy Lessons Planning 
+                Udemy Lessons Planning
             </h1>
             <RawTextBox
                 setTodoList={setTodoList}
@@ -92,12 +93,16 @@ function App() {
             <Modal
                 show={requestCourses}
                 onHide={() => setRequestCourses(false)}
+                size="lg"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Add courses</Modal.Title>
+                    <Modal.Title>Add courses </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <p>Note: Separate the name of the courses by lines</p>
+                    <div style={{position: "relative"}} >
+                        <Tutorial displayHelp={true} />
+                    </div>
                     <textarea
                         required
                         className="form-control"
@@ -119,7 +124,7 @@ function App() {
                     </Button>
                     <Button
                         variant="primary"
-                        onClick={() => saveCourses(courseName,  "new")}
+                        onClick={() => saveCourses(courseName, "new")}
                     >
                         Save Changes
                     </Button>
