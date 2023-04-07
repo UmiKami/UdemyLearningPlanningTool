@@ -3,28 +3,26 @@ import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "../styles/RawTextBox.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import tutorial from "../assets/tutorial.mp4";
+import Tutorial from "./Tutorial";
+
 
 const RawTextBox = ({ setTodoList, courseList, saveCourses }) => {
     const [rawText, setRawText] = useState(
         localStorage.getItem("rawText") || ""
     );
 
-    const [displayHelp, setDisplayHelp] = useState(false);
 
     const [selectedCourse, setSelectedCourse] = useState(courseList[0]);
     const [courseName, setCourseName] = useState("");
     const [requestCourses, setRequestCourses] = useState(false);
-    const [openVideo, setOpenVideo] = useState(false);
+    const [displayHelp, setDisplayHelp] = useState(false);
 
 
     console.log(selectedCourse);
-    
+
     const handlePromptSubmit = (e) => {
         e.preventDefault();
-        
+
         let rawTextWithRemovedEmptyLines = rawText.replace(
             /^(?=\n)$|^\s*|\s*$|\n\n+/gm,
             ""
@@ -45,7 +43,12 @@ const RawTextBox = ({ setTodoList, courseList, saveCourses }) => {
 
                 if (durationRegex.test(durationLine)) {
                     const duration = parseInt(durationLine);
-                    lessons.push({ title: titleLine, duration, done: false, course: selectedCourse });
+                    lessons.push({
+                        title: titleLine,
+                        duration,
+                        done: false,
+                        course: selectedCourse,
+                    });
                     totalTime += duration;
                 } else {
                     throw new Error(
@@ -61,14 +64,13 @@ const RawTextBox = ({ setTodoList, courseList, saveCourses }) => {
             }
         }
 
-        let newList = JSON.parse(localStorage.getItem("todoList")).lessons || [];
+        let newList =
+            JSON.parse(localStorage.getItem("todoList")).lessons || [];
         newList = newList.filter((item) => item.course !== selectedCourse);
         newList = [...newList, ...lessons];
 
-        
-
         setTodoList({
-            lessons: newList
+            lessons: newList,
         });
         localStorage.setItem("rawText", rawTextWithRemovedEmptyLines);
     };
@@ -96,13 +98,7 @@ const RawTextBox = ({ setTodoList, courseList, saveCourses }) => {
                         }}
                         style={{ resize: "none" }}
                     ></textarea>
-                    <span
-                        className="tutorial-prompt d-flex align-items-center gap-1"
-                        style={{ opacity: displayHelp ? 1 : 0 }}
-                        onClick={() => setOpenVideo(true)}
-                    >
-                        <FontAwesomeIcon icon={faCircleInfo} /> Watch Tutorial
-                    </span>
+                    <Tutorial displayHelp={displayHelp} />
                 </div>
                 <select
                     className="form-select mt-4"
@@ -124,18 +120,7 @@ const RawTextBox = ({ setTodoList, courseList, saveCourses }) => {
                 >
                     Add Course
                 </button>
-                <Modal
-                    show={openVideo}
-                    onHide={() => setOpenVideo(false)}
-                    size="xl"
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title style={{textTransform: "capitalize"}}>How to use this page</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <video src={tutorial} className="col-12" controls></video>
-                    </Modal.Body>
-                </Modal>
+
 
                 <Modal
                     show={requestCourses}
