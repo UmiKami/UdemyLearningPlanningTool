@@ -32,7 +32,11 @@ const RawTextBox = ({ setTodoList, courseList, saveCourses }) => {
 
         let totalTime = 0;
 
-        const lines = rawTextWithRemovedEmptyLines.split("\n");
+        let lines = rawTextWithRemovedEmptyLines
+            .split("\n")
+            .filter((line) => line != "Play" && line != "Start");
+        
+            
         for (let i = 0; i < lines.length; i++) {
             const titleLine = lines[i];
             const titleRegex = /^\d{1,3}\..+/;
